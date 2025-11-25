@@ -7,11 +7,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.kfh.clinic.entity.AppUser;
-import com.kfh.clinic.entity.Doctor;
-import com.kfh.clinic.entity.UserRole;
-import com.kfh.clinic.repository.AppUserRepository;
-import com.kfh.clinic.repository.DoctorRepository;
+import com.kfh.clinic.infrastructure.entity.AppUser;
+import com.kfh.clinic.infrastructure.entity.Doctor;
+import com.kfh.clinic.infrastructure.entity.UserRole;
+import com.kfh.clinic.infrastructure.repository.AppUserRepository;
+import com.kfh.clinic.infrastructure.repository.DoctorRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

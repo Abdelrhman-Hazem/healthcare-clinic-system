@@ -14,8 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.kfh.clinic.security.CustomUserDetailsService;
-import com.kfh.clinic.security.JwtAuthenticationFilter;
+import com.kfh.clinic.config.security.CustomUserDetailsService;
+import com.kfh.clinic.config.security.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 

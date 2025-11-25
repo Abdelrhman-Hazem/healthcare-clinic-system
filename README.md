@@ -36,6 +36,13 @@ Use `/api/auth/login` to obtain a JWT token, then include `Authorization: Bearer
 
 Swagger UI available at `/swagger-ui.html` with OpenAPI spec at `/api-docs`.
 
+## Architecture
+- `com.kfh.clinic.api`: REST controllers plus request/response DTOs
+- `com.kfh.clinic.application`: transactional services orchestrating workflows
+- `com.kfh.clinic.domain`: entities and repositories representing the core model
+- `com.kfh.clinic.infrastructure`: cross-cutting concerns (config, security, JWT, seeding)
+- `com.kfh.clinic.shared`: reusable exception and common utilities
+
 ## Testing
 ```bash
 ./mvnw test
