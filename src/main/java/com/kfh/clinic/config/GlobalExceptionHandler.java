@@ -1,4 +1,4 @@
-package com.kfh.clinic.application.exception;
+package com.kfh.clinic.config;
 
 import java.time.Instant;
 import java.util.List;
@@ -16,6 +16,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.kfh.clinic.api.models.ApiResponse;
+import com.kfh.clinic.application.exception.CustomArgumentValidationException;
+import com.kfh.clinic.application.exception.DuplicateResourceException;
+import com.kfh.clinic.application.exception.InvalidRequestException;
+import com.kfh.clinic.application.exception.ResourceNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -29,28 +33,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.map(this::formatFieldError)
 				.collect(Collectors.toList());
 
-		ApiError error = new ApiError(Instant.now(), HttpStatus.BAD_REQUEST.value(), "Validation Error",
+		CustomArgumentValidationException error = new CustomArgumentValidationException(Instant.now(), HttpStatus.BAD_REQUEST.value(), "Validation Error",
 				"Invalid request body", request.getDescription(false), details);
 		return ResponseEntity.badRequest().body(error);
 	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<ApiError> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
+	public ResponseEntity<CustomArgumentValidationException> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
 		return buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
 	}
 
 	@ExceptionHandler(DuplicateResourceException.class)
-	public ResponseEntity<ApiError> handleDuplicate(DuplicateResourceException ex, WebRequest request) {
+	public ResponseEntity<CustomArgumentValidationException> handleDuplicate(DuplicateResourceException ex, WebRequest request) {
 		return buildError(HttpStatus.CONFLICT, ex.getMessage(), request);
 	}
 
 	@ExceptionHandler(InvalidRequestException.class)
-	public ResponseEntity<ApiError> handleInvalid(InvalidRequestException ex, WebRequest request) {
+	public ResponseEntity<CustomArgumentValidationException> handleInvalid(InvalidRequestException ex, WebRequest request) {
 		return buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ApiError> handleGeneric(Exception ex, WebRequest request) {
+	public ResponseEntity<CustomArgumentValidationException> handleGeneric(Exception ex, WebRequest request) {
 		return buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
 	}
 
@@ -59,8 +63,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, ex.getMessage(), Instant.now()));
 	}
 
-	private ResponseEntity<ApiError> buildError(HttpStatus status, String message, WebRequest request) {
-		ApiError error = new ApiError(Instant.now(), status.value(), status.getReasonPhrase(), message,
+	private ResponseEntity<CustomArgumentValidationException> buildError(HttpStatus status, String message, WebRequest request) {
+		CustomArgumentValidationException error = new CustomArgumentValidationException(Instant.now(), status.value(), status.getReasonPhrase(), message,
 				request.getDescription(false), List.of());
 		return ResponseEntity.status(status).body(error);
 	}

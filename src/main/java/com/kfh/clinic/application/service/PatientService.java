@@ -2,6 +2,8 @@ package com.kfh.clinic.application.service;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +37,9 @@ public class PatientService {
 	}
 
 	@Transactional(readOnly = true)
+	@Cacheable(cacheNames = "patients")
 	public List<PatientDTO> getAllPatientsWithAppointments() {
+		log.debug("Fetching all patients with appointments from database");
 		return patientRepository.findAllByOrderByFullNameEnAsc()
 				.stream()
 				.map(patientEntityMapper::toDto)
@@ -43,11 +47,12 @@ public class PatientService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = "patients", allEntries = true)
 	public void softDeletePatient(Long patientId) {
 		Patient patient = patientRepository.findById(patientId)
 				.orElseThrow(() -> new ResourceNotFoundException("Patient not found with id " + patientId));
 		patient.setActive(false);
-		log.warn("Soft deleting patient {} - {}", patientId, patient.getEmail());
+		log.warn("Soft deleting patient {} - {} (cache evicted)", patientId, patient.getEmail());
 		patientRepository.save(patient);
 	}
 

@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import com.kfh.clinic.config.JwtProperties;
+import com.kfh.clinic.config.security.JwtProperties;
 
 @SpringBootApplication
 @EnableCaching

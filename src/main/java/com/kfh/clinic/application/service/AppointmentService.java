@@ -1,5 +1,6 @@
 package com.kfh.clinic.application.service;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class AppointmentService {
 	private final AppointmentEntityMapper appointmentEntityMapper;
 
 	@Transactional
+	@CacheEvict(cacheNames = "patients", allEntries = true)
 	public AppointmentDTO scheduleAppointment(AppointmentDTO dto) {
 		Patient patient = patientRepository.findById(dto.getPatientId())
 				.orElseThrow(() -> new ResourceNotFoundException("Patient not found with id " + dto.getPatientId()));
@@ -36,7 +38,7 @@ public class AppointmentService {
 			throw new InvalidRequestException("Cannot schedule appointment for inactive patient");
 		}
 
-		log.info("Scheduling appointment patient={} doctor={} date={}", patient.getId(), doctor.getId(),
+		log.info("Scheduling appointment patient={} doctor={} date={} (cache evicted)", patient.getId(), doctor.getId(),
 				dto.getAppointmentDateTime());
 		
 		dto.setStatus(AppointmentStatus.SCHEDULED.name());
@@ -50,11 +52,12 @@ public class AppointmentService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = "patients", allEntries = true)
 	public AppointmentDTO updateAppointment(Long appointmentId, AppointmentDTO dto) {
 		Appointment appointment = appointmentRepository.findById(appointmentId)
 				.orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id " + appointmentId));
 
-		log.info("Updating appointment {} status {}", appointmentId, dto.getStatus());
+		log.info("Updating appointment {} status {} (cache evicted)", appointmentId, dto.getStatus());
 		appointment.setAppointmentDateTime(dto.getAppointmentDateTime());
 		appointment.setNotes(dto.getNotes());
 		if (dto.getStatus() != null) {

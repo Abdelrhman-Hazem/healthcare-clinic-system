@@ -31,14 +31,22 @@ public class AuthController {
 
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
-	@Operation(summary = "Login", description = "Authenticates the user and returns a JWT access token.")
+	@Operation(summary = "Login", description = "Authenticates the user and returns a JWT access token (valid for 3 minutes). Session is valid for 10 minutes.")
 	public LoginResponse login(@Valid @RequestBody LoginRequest request) {
 		return authService.login(request);
 	}
 
+	@PostMapping("/refresh")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "Refresh token", description = "Renews the JWT token if the session (10 minutes) is still active. Token expires in 3 minutes.")
+	public LoginResponse refreshToken(
+			@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
+		return authService.refreshToken(authorizationHeader);
+	}
+
 	@PostMapping("/logout")
 	@ResponseStatus(HttpStatus.OK)
-	@Operation(summary = "Logout", description = "Revoke the active JWT token for the current session.")
+	@Operation(summary = "Logout", description = "Revoke the active JWT token and session.")
 	public ApiResponse logout(
 			@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 		return authService.logout(authorizationHeader);

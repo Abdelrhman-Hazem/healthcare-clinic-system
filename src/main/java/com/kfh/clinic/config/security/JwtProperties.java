@@ -19,5 +19,8 @@ public class JwtProperties {
 
 	@Positive
 	private long accessTokenValidityMinutes;
+
+	@Positive
+	private long sessionValidityMinutes;
 }
 

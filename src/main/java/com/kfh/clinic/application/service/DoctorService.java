@@ -29,7 +29,7 @@ public class DoctorService {
 	@Transactional(readOnly = true)
 	@Cacheable(cacheNames = "doctors")
 	public CompletableFuture<List<DoctorDTO>> getDoctorsAsync() {
-		log.debug("Fetching doctors list");
+		log.debug("Fetching doctors list from database");
 		List<DoctorDTO> doctors = doctorRepository.findAll()
 				.stream()
 				.map(doctorEntityMapper::toDto)

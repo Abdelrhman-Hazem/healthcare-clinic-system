@@ -3,7 +3,7 @@ package com.kfh.clinic.application.exception;
 import java.time.Instant;
 import java.util.List;
 
-public record ApiError(
+public record CustomArgumentValidationException(
 		Instant timestamp,
 		int status,
 		String error,
