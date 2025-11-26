@@ -39,6 +39,9 @@ SPRING_PROFILES_ACTIVE=test ./mvnw test
 
 ## Key Endpoints
 
+### Postman Collection
+Complete postman collection with examples [here](https://documenter.getpostman.com/view/26735712/2sB3dJyroR)
+
 ### Authentication Endpoints (Public)
 | Endpoint | Method | Description |
 | --- | --- | --- |
