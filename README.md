@@ -2,6 +2,10 @@
 
 Healthcare Clinic System showcasing Spring Boot REST best practices for the KFH assessment. It covers patient onboarding, doctor lookup, appointment scheduling and secure session-based authentication with JWT and active token tracking.
 
+This project has **heavely utilized AI tools (especially Cursor IDE)** to accelerate and enhance the efficiency of the development process . Nevertheless, human reviewing and editing were extremly crucial for the smooth and successful run of the application, and its compliance with the requirments.
+
+The effectiveness of AI generated code and the impact of human auditing **can be assessed by following the commits of the projects; each major commit describes the role of human/AI in this specific commit.** 
+
 ## Features
 - Full CRUD workflow for patients (registration, listing with appointments, soft delete)
 - Doctor lookup backed by cached asynchronous service and profile-based data seeding
