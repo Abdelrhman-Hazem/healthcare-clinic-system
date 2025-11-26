@@ -2,6 +2,9 @@ package com.kfh.clinic.application.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+
 public class AppointmentDTO {
     private Long id;
     private Long patientId;

@@ -6,6 +6,7 @@ import com.kfh.clinic.api.models.AppointmentUpdateRequest;
 import com.kfh.clinic.application.dto.AppointmentDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface AppointmentApiMapper {
@@ -23,6 +24,6 @@ public interface AppointmentApiMapper {
     @Mapping(target = "doctorId", ignore = true)
     @Mapping(target = "doctorName", ignore = true)
     @Mapping(target = "status", ignore = true)
-    void updateDtoFromRequest(AppointmentUpdateRequest request, @org.mapstruct.MappingTarget AppointmentDTO dto);
+    void updateDtoFromRequest(AppointmentUpdateRequest request, @MappingTarget AppointmentDTO dto);
 }
 

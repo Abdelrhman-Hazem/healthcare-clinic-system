@@ -1,6 +1,11 @@
 package com.kfh.clinic.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+
 public class DoctorDTO {
+    private static final long serialVersionUID = 123432456L;
+
     private Long id;
     private String nameEn;
     private String nameAr;

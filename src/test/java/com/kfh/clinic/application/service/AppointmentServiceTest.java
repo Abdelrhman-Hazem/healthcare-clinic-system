@@ -3,12 +3,14 @@ package com.kfh.clinic.application.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.kfh.clinic.application.dto.AppointmentDTO;
 import com.kfh.clinic.application.exception.InvalidRequestException;
+import com.kfh.clinic.application.exception.ResourceNotFoundException;
 import com.kfh.clinic.application.mapper.AppointmentEntityMapper;
 import com.kfh.clinic.infrastructure.entity.Appointment;
 import com.kfh.clinic.infrastructure.entity.AppointmentStatus;
@@ -72,7 +75,7 @@ class AppointmentServiceTest {
 	}
 
 	@Test
-	void scheduleAppointment_ShouldCreateAppointment() {
+	void scheduleAppointment_ShouldCreateAppointment() throws Exception {
 		LocalDateTime appointmentDate = LocalDateTime.now().plusDays(1);
 		AppointmentDTO dto = new AppointmentDTO();
 		dto.setPatientId(activePatient.getId());
@@ -96,7 +99,8 @@ class AppointmentServiceTest {
 		savedDto.setStatus(AppointmentStatus.SCHEDULED.name());
 		when(appointmentEntityMapper.toDto(any(Appointment.class))).thenReturn(savedDto);
 
-		var response = appointmentService.scheduleAppointment(dto);
+		var future = appointmentService.scheduleAppointment(dto);
+		var response = future.get();
 
 		assertThat(response.getId()).isEqualTo(10L);
 		assertThat(response.getStatus()).isEqualTo(AppointmentStatus.SCHEDULED.name());
@@ -148,6 +152,51 @@ class AppointmentServiceTest {
 		assertThat(response.getStatus()).isEqualTo(AppointmentStatus.COMPLETED.name());
 		assertThat(response.getAppointmentDateTime()).isEqualTo(newDate);
 		verify(appointmentRepository).save(appointment);
+	}
+
+	@Test
+	void getAppointment_ShouldReturnAppointmentWhenExists() {
+		Appointment appointment = Appointment.builder()
+				.id(10L)
+				.patient(activePatient)
+				.doctor(doctor)
+				.appointmentDateTime(LocalDateTime.now().plusDays(1))
+				.notes("Test notes")
+				.status(AppointmentStatus.SCHEDULED)
+				.build();
+
+		AppointmentDTO dto = new AppointmentDTO();
+		dto.setId(10L);
+		dto.setStatus(AppointmentStatus.SCHEDULED.name());
+
+		when(appointmentRepository.findById(10L)).thenReturn(Optional.of(appointment));
+		when(appointmentEntityMapper.toDto(appointment)).thenReturn(dto);
+
+		AppointmentDTO result = appointmentService.getAppointment(10L);
+
+		assertThat(result.getId()).isEqualTo(10L);
+		assertThat(result.getStatus()).isEqualTo(AppointmentStatus.SCHEDULED.name());
+		verify(appointmentRepository).findById(10L);
+	}
+
+	@Test
+	void getAppointment_ShouldThrowExceptionWhenNotFound() {
+		when(appointmentRepository.findById(999L)).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> appointmentService.getAppointment(999L));
+		verify(appointmentRepository).findById(999L);
+	}
+
+	@Test
+	void scheduleAppointment_ShouldThrowExceptionWhenPatientNotFound() {
+		AppointmentDTO dto = new AppointmentDTO();
+		dto.setPatientId(999L);
+		dto.setDoctorId(doctor.getId());
+
+		when(patientRepository.findById(999L)).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> appointmentService.scheduleAppointment(dto));
+		verify(appointmentRepository, never()).save(any(Appointment.class));
 	}
 }
 

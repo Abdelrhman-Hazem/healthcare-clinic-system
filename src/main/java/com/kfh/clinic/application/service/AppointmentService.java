@@ -1,6 +1,8 @@
 package com.kfh.clinic.application.service;
 
-import org.springframework.cache.annotation.CacheEvict;
+import java.util.concurrent.CompletableFuture;
+
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +30,9 @@ public class AppointmentService {
 	private final DoctorService doctorService;
 	private final AppointmentEntityMapper appointmentEntityMapper;
 
+	@Async
 	@Transactional
-	@CacheEvict(cacheNames = "patients", allEntries = true)
-	public AppointmentDTO scheduleAppointment(AppointmentDTO dto) {
+	public CompletableFuture<AppointmentDTO> scheduleAppointment(AppointmentDTO dto) {
 		Patient patient = patientRepository.findById(dto.getPatientId())
 				.orElseThrow(() -> new ResourceNotFoundException("Patient not found with id " + dto.getPatientId()));
 		Doctor doctor = doctorService.getDoctorById(dto.getDoctorId());
@@ -48,11 +50,10 @@ public class AppointmentService {
 		appointment.setStatus(AppointmentStatus.SCHEDULED);
 
 		Appointment saved = appointmentRepository.save(appointment);
-		return appointmentEntityMapper.toDto(saved);
+		return CompletableFuture.completedFuture(appointmentEntityMapper.toDto(saved));
 	}
 
 	@Transactional
-	@CacheEvict(cacheNames = "patients", allEntries = true)
 	public AppointmentDTO updateAppointment(Long appointmentId, AppointmentDTO dto) {
 		Appointment appointment = appointmentRepository.findById(appointmentId)
 				.orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id " + appointmentId));

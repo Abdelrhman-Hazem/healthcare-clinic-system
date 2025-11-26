@@ -1,10 +1,10 @@
 package com.kfh.clinic.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +25,15 @@ public class DoctorService {
 	private final DoctorRepository doctorRepository;
 	private final DoctorEntityMapper doctorEntityMapper;
 
-	@Async
 	@Transactional(readOnly = true)
-	@Cacheable(cacheNames = "doctors")
-	public CompletableFuture<List<DoctorDTO>> getDoctorsAsync() {
+	@Cacheable(cacheNames = "doctors", key = "#root.method.name")
+	public List<DoctorDTO> getDoctors() {
 		log.debug("Fetching doctors list from database");
 		List<DoctorDTO> doctors = doctorRepository.findAll()
 				.stream()
 				.map(doctorEntityMapper::toDto)
-				.toList();
-		return CompletableFuture.completedFuture(doctors);
+				.collect(Collectors.toList());
+		return doctors;
 	}
 
 	@Transactional(readOnly = true)

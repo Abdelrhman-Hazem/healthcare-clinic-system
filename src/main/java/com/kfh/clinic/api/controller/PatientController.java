@@ -50,7 +50,7 @@ public class PatientController {
 	}
 
 	@DeleteMapping("/{patientId}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(summary = "Soft delete patient", description = "Marks the patient as inactive without removing data.")
 	public void deletePatient(@PathVariable Long patientId) {
 		patientService.softDeletePatient(patientId);

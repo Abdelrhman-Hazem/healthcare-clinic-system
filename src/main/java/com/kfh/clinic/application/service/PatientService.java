@@ -37,7 +37,6 @@ public class PatientService {
 	}
 
 	@Transactional(readOnly = true)
-	@Cacheable(cacheNames = "patients")
 	public List<PatientDTO> getAllPatientsWithAppointments() {
 		log.debug("Fetching all patients with appointments from database");
 		return patientRepository.findAllByOrderByFullNameEnAsc()
@@ -47,7 +46,6 @@ public class PatientService {
 	}
 
 	@Transactional
-	@CacheEvict(cacheNames = "patients", allEntries = true)
 	public void softDeletePatient(Long patientId) {
 		Patient patient = patientRepository.findById(patientId)
 				.orElseThrow(() -> new ResourceNotFoundException("Patient not found with id " + patientId));

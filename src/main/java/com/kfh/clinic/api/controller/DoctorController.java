@@ -1,7 +1,6 @@
 package com.kfh.clinic.api.controller;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +26,12 @@ public class DoctorController {
 	private final DoctorApiMapper doctorApiMapper;
 
 	@GetMapping
-	@Operation(summary = "List doctors", description = "Retrieves doctors asynchronously and caches the response.")
-	public CompletableFuture<List<DoctorResponse>> getDoctors() {
-		return doctorService.getDoctorsAsync()
-				.thenApply(doctors -> doctors.stream()
-						.map(doctorApiMapper::toResponse)
-						.toList());
+	@Operation(summary = "List doctors", description = "Retrieves doctors and caches the response.")
+	public List<DoctorResponse> getDoctors() {
+		return doctorService.getDoctors()
+				.stream()
+				.map(doctorApiMapper::toResponse)
+				.toList();
 	}
 }
 

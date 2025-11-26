@@ -3,6 +3,9 @@ package com.kfh.clinic.application.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+
 public class PatientDTO {
     private Long id;
     private String fullNameEn;
